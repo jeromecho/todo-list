@@ -1,0 +1,17 @@
+html, body {
+    height: 100%; 
+}
+
+main {
+    display: grid; 
+    grid-template-columns: 20% 80%;
+    height: inherit;
+}
+
+main > #menu {
+    background-color: rgba(173, 216, 230, 0.7);
+}
+
+main > #content {
+    background-color: rgba(79, 99, 160, 0.5);
+}
