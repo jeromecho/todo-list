@@ -30,8 +30,34 @@ main > #content {
 }
 
 #content > #menu {
+    align-items: center;
     background-color: var(--menu-bg-color);
+    display: flex;
+    flex-direction: column;
     max-width: 300px;
+}
+
+#content > #taskboard {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#taskboard > #project-display {
+    align-items: center;
+    display: flex; 
+    flex-direction: column;
+    height: 70%; 
+    max-width: 800px;
+    width: 80%; 
+}
+ 
+#project-display > p {
+    font-size: 1.3em;
+}
+
+#menu > h2 {
+    margin-top: 10px
 }
 
 #content > #taskboard {
