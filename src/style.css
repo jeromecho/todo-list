@@ -56,8 +56,56 @@ main > #content {
     font-size: 1.3em;
 }
 
+#project-display > #add-task-button {
+    background-color: var(--header-bg-color);
+    border-radius: 100%;
+    height: 50px;
+    width: 50px;
+}
+
+#project-display > #add-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
 #menu > h2 {
     margin-top: 10px
+}
+
+.add-button {
+    background-color: var(--header-bg-color);
+    border-radius: 100%;
+    cursor: pointer;
+    height: 50px;
+    transition: 700ms;
+    width: 50px;
+}
+
+.horizontal-cross {
+    background-color: var(--main-bg-color);
+    border-radius: 25%;
+    height: 70%;
+    position: relative;
+    bottom: 27px; 
+    left: 22px;
+    transform: rotate(90deg);
+    width: 10%;
+}
+
+.vertical-cross {
+    background-color: var(--main-bg-color);
+    border-radius: 25%;
+    height: 70%;
+    left: 22px;
+    position: relative;
+    top: 7px;
+    width: 10%;
+}
+
+.add-button:hover {
+    opacity: 75%;
+    transform: rotate(90deg);
 }
 
 #content > #taskboard {

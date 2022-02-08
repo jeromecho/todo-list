@@ -1,6 +1,5 @@
 import Project from './project';
 import Task from './task'
-// here
 
 const body = document.querySelector("body"); 
 
@@ -57,12 +56,33 @@ const makeMenu = function() {
     project2.id = "project2"; 
     project3.id = "project3"; 
 
+
     menu.appendChild(project1);
     menu.appendChild(project2); 
     menu.appendChild(project3);
+    menu.appendChild(makePButton());
 
     return menu;
 }
+
+const makePButton = function() {
+
+    const addProject = document.createElement("div");
+
+    addProject.id = "project-button";
+    addProject.className = "add-button";
+
+    const verticalCross = document.createElement("div"); 
+    const horizontalCross = document.createElement("div");
+
+    verticalCross.className = "vertical-cross";
+    horizontalCross.className = "horizontal-cross";
+
+    addProject.appendChild(verticalCross);
+    addProject.appendChild(horizontalCross);
+
+    return addProject; 
+};
 
 const makeTaskboard = function() {
     const taskBoard = document.createElement("div"); 
@@ -82,18 +102,44 @@ const makeTaskboard = function() {
 
 const makeProjectDisplay = () => {
     const projectDisplay = document.createElement("div");
+
     projectDisplay.id = "project-display";
 
     // dummy values 
-
     for (let i = 0; i < 5; i ++) {
         let text = document.createElement("p");
         text.textContent = `task ${i}`;
         projectDisplay.appendChild(text);
     }
 
+    // !!!
+    projectDisplay.appendChild(makeAddContainer());
+
     return projectDisplay;
-}
+};
+
+
+const makeAddContainer = function() {
+    const container = document.createElement("div");
+    const addTask = document.createElement("div");
+    container.id = "add-container";
+
+    addTask.id = "add-task-button";
+    addTask.className = "add-button";
+
+    const verticalCross = document.createElement("div");
+    const horizontalCross = document.createElement("div");
+
+    verticalCross.className = "vertical-cross"; 
+    horizontalCross.className = "horizontal-cross";
+
+    addTask.appendChild(verticalCross);
+    addTask.appendChild(horizontalCross);
+    
+    container.appendChild(addTask);
+
+    return container;
+};
 
 export default generateInterface; 
 

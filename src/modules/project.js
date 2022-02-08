@@ -30,3 +30,6 @@ export default Project;
 
 
 // Question - how to organize application logic - what do I need and why?
+// Question - how does the UI and project itneract? 
+
+/* My take: event listeners add added in the UI page  */
