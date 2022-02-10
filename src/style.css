@@ -73,6 +73,21 @@ main > #content {
     margin-top: 10px
 }
 
+.project-container {
+    align-items: center;
+    display: flex;
+    height: 10%;
+    justify-content: center;
+    transition: 500ms;
+    width: 100%;
+}
+
+.project-container:hover {
+    background-color: var(--header-bg-color);
+    color: var(--main-bg-color);
+    opacity: 60%;
+}
+
 .add-button {
     background-color: var(--header-bg-color);
     border-radius: 100%;

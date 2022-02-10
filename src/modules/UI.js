@@ -7,6 +7,18 @@ const generateInterface = function() {
     body.appendChild(makeMain()); 
 }
 
+const deleteInterace = function() {
+    while (body.firstChild) {
+        body.removeChild(body.lastChild);
+    }
+
+}
+
+const updateInterface = function() {
+    deleteInterace(); 
+    generateInterface();
+}
+
 const makeMain = function () {
     const main = document.createElement("main"); 
 
@@ -43,34 +55,59 @@ const makeMenu = function() {
     const menu = document.createElement("div");
     menu.id = "menu"; 
 
-    // hard code 
-    const project1 = document.createElement("h2"); 
-    const project2 = document.createElement("h2"); 
-    const project3 = document.createElement("h2");
+    // appends projects names to menu
+    appendProjects(menu);
 
-    project1.textContent = "Project 1"; 
-    project2.textContent = "Project 2";
-    project3.textContent = "Project 3";
-    
-    project1.id = "project1"; 
-    project2.id = "project2"; 
-    project3.id = "project3"; 
-
-
-    menu.appendChild(project1);
-    menu.appendChild(project2); 
-    menu.appendChild(project3);
     menu.appendChild(makePButton());
 
     return menu;
 }
 
+const appendProjects = function (menu) {
+    let projectNames = Project.returnProjectNames();
+
+    for (let i = 0; i < projectNames.length; i++) {
+        let projectContainer = document.createElement("div");
+        let project = document.createElement("h2");
+
+        projectContainer.className = "project-container";
+        project.id = `project${i}`;
+        project.className = "project";
+        project.textContent = projectNames[i];
+
+        projectContainer.appendChild(project);
+
+        menu.appendChild(projectContainer);
+    }
+}
+
+
+// project button 
 const makePButton = function() {
 
     const addProject = document.createElement("div");
 
     addProject.id = "project-button";
     addProject.className = "add-button";
+
+    addProject.addEventListener("click", () => {
+        let newProject = Project.makeProject({name: "Untitled"});
+        Project.addProjectToList(newProject);
+        // update entire interface 
+        updateInterface();
+    });
+
+    /* ERROR here
+    // create new project
+    addProject.addEventListener("click", () => {
+        let newProject = Project.makeProject({"Untitled Project"});
+        Project.addProjectToList(newProject);
+        // add to project list 
+        // append the new project using appendProjects to menu 
+        // issue, don't have access to menu right now 
+    });
+    */
+
 
     const verticalCross = document.createElement("div"); 
     const horizontalCross = document.createElement("div");
@@ -126,6 +163,11 @@ const makeAddContainer = function() {
 
     addTask.id = "add-task-button";
     addTask.className = "add-button";
+
+    // TODO 
+    addTask.addEventListener("click", () => {
+       console.log("Harmless");
+    });
 
     const verticalCross = document.createElement("div");
     const horizontalCross = document.createElement("div");

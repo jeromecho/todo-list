@@ -14,6 +14,7 @@ swimming.addTask(Task.makeTask({title: "lafarge", dueDate: "september 2", priori
 console.log(swimming);
 
 
+console.log(Project.returnProjectNames());
 
 
 // addTask not working
