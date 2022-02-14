@@ -16,9 +16,12 @@ console.log(swimming);
 
 console.log(Project.returnProjectNames());
 
-
+console.log(Project.returnByName("Project 2"))
 // addTask not working
 
+console.log(Project.returnByName(Project.returnProjectNames[0]));
+
+console.log(Project.returnProjectNames());
 
 
 

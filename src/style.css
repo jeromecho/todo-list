@@ -56,6 +56,21 @@ main > #content {
     font-size: 1.3em;
 }
 
+#project-display > .task {
+    text-align: center;
+    transition: 500ms;
+    width: 100%;
+}
+
+#project-display > .task:hover {
+    background-color: var(--menu-bg-color);
+    opacity: 60%;
+}
+
+.task > p {
+    font-size: 1.3em;
+}
+
 #project-display > #add-task-button {
     background-color: var(--header-bg-color);
     border-radius: 100%;
@@ -75,11 +90,12 @@ main > #content {
 
 .project-container {
     align-items: center;
+    cursor: pointer;
     display: flex;
     height: 10%;
     justify-content: center;
     transition: 500ms;
-    width: 100%;
+    width: 100%
 }
 
 .project-container:hover {

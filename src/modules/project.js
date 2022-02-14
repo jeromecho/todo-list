@@ -13,13 +13,28 @@ const Project = (function() {
     const _projectList = [makeProject({name: "Project 1"}), 
     makeProject({name: "Project 2"}), makeProject({name: "Project 3"})];
 
+    const currentProjectTitle = _projectList[0].name;
+
     const addProjectToList = (proj) => {
         _projectList.push(proj); 
     }
 
+    // takes in proj name and updated object, updates _projectList w splice, no return value
+    const updateProj = (name, proj) => {
+        let index = _projectList.map(proj => proj.name).indexOf(name);
+        _projectList.splice(index, 1, proj);
+    }
+
+    // returns a copy 
     const returnProjectNames = () => {
         return _projectList.map(project => project.name);
     };
+
+    // returns a copy
+    const returnByName = (name) => {
+        // if duplicates, return the first match
+        return _projectList.filter(project => (project.name == name))[0];
+    }
 
     const delTask = (title) => {
         let index = this.taskList.map(task => {
@@ -29,16 +44,14 @@ const Project = (function() {
         taskList.splice(index, 1);
     }
 
-    return { makeProject, delTask, returnProjectNames, addProjectToList}
+    return { makeProject, 
+        delTask, 
+        returnProjectNames, 
+        addProjectToList, 
+        returnByName,
+        currentProjectTitle,
+        updateProj,
+    }
 })();
 
 export default Project;
-
-// consumers perspective
-// Opens application, clicks add project, should make a project
-
-
-// Question - how to organize application logic - what do I need and why?
-// Question - how does the UI and project itneract? 
-
-/* My take: event listeners add added in the UI page  */

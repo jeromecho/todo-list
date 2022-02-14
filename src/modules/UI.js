@@ -7,7 +7,7 @@ const generateInterface = function() {
     body.appendChild(makeMain()); 
 }
 
-const deleteInterace = function() {
+const deleteInterface = function() {
     while (body.firstChild) {
         body.removeChild(body.lastChild);
     }
@@ -15,7 +15,7 @@ const deleteInterace = function() {
 }
 
 const updateInterface = function() {
-    deleteInterace(); 
+    deleteInterface(); 
     generateInterface();
 }
 
@@ -68,12 +68,34 @@ const appendProjects = function (menu) {
 
     for (let i = 0; i < projectNames.length; i++) {
         let projectContainer = document.createElement("div");
-        let project = document.createElement("h2");
+        let project = document.createElement("input");
 
         projectContainer.className = "project-container";
+
         project.id = `project${i}`;
         project.className = "project";
-        project.textContent = projectNames[i];
+        project.type = "text";
+
+        // POTENTIAL EDIT 
+        project.value = projectNames[i];
+        
+        projectContainer.addEventListener("click", () => {
+            let tempProject = Project.returnByName(project.textContent);
+
+            Project.currentProjectTitle = tempProject.name;
+            Task.currentTaskList = tempProject.taskList; 
+
+            updateInterface();
+        });
+
+        // TODO: implement dblclick name change 
+        projectContainer.addEventListener("dblclick", () => {
+            if (project.hasAttribute("readonly")) {
+                project.removeAttribute("readonly");
+            } else {
+                project.setAttribute("readonly", "true");
+            }
+        });
 
         projectContainer.appendChild(project);
 
@@ -97,18 +119,6 @@ const makePButton = function() {
         updateInterface();
     });
 
-    /* ERROR here
-    // create new project
-    addProject.addEventListener("click", () => {
-        let newProject = Project.makeProject({"Untitled Project"});
-        Project.addProjectToList(newProject);
-        // add to project list 
-        // append the new project using appendProjects to menu 
-        // issue, don't have access to menu right now 
-    });
-    */
-
-
     const verticalCross = document.createElement("div"); 
     const horizontalCross = document.createElement("div");
 
@@ -129,34 +139,52 @@ const makeTaskboard = function() {
 
     projectTitle.id = "project-title";
 
-    projectTitle.textContent = "Dummy Project"; 
+    projectTitle.textContent = Project.currentProjectTitle; 
 
     taskBoard.appendChild(projectTitle);
-    taskBoard.appendChild(makeProjectDisplay());
+    taskBoard.appendChild(makeProjectDisplay(projectTitle));
 
     return taskBoard;
 }
 
-const makeProjectDisplay = () => {
+const makeProjectDisplay = (projectTitle) => {
     const projectDisplay = document.createElement("div");
 
     projectDisplay.id = "project-display";
+    
+    appendTasks(projectDisplay);
 
-    // dummy values 
-    for (let i = 0; i < 5; i ++) {
-        let text = document.createElement("p");
-        text.textContent = `task ${i}`;
-        projectDisplay.appendChild(text);
-    }
-
-    // !!!
-    projectDisplay.appendChild(makeAddContainer());
+    projectDisplay.appendChild(makeAddContainer(projectTitle));
 
     return projectDisplay;
 };
 
+const appendTasks = function(pd) {
+    // For initialization
+    checkTaskList();
 
-const makeAddContainer = function() {
+    for (let i = 0; i < Task.currentTaskList.length; i ++) {
+        let container = document.createElement("div");
+        let text = document.createElement("p");
+        container.className = "task";
+        text.textContent = Task.currentTaskList[i].title;
+        // insert more task functionality 
+        container.appendChild(text);
+        pd.appendChild(container);
+    }
+}
+
+const checkTaskList = function() {
+    // when user loads webpage
+    if (Task.currentTaskList.length == []) {
+        Task.currentTaskList = (Project.returnByName(Project.returnProjectNames()[0])).taskList;
+    } else {
+        return; 
+    }
+}
+
+// takes in project title from decsending inheritance, uses it to access project
+const makeAddContainer = function(projectTitle) {
     const container = document.createElement("div");
     const addTask = document.createElement("div");
     container.id = "add-container";
@@ -165,8 +193,18 @@ const makeAddContainer = function() {
     addTask.className = "add-button";
 
     // TODO 
-    addTask.addEventListener("click", () => {
-       console.log("Harmless");
+    addTask.addEventListener("click", () => { 
+       
+       let tempProj = Project.returnByName(projectTitle.textContent);
+
+       tempProj.addTask({title: "Untitled", dueDate: 0, priority: 0, description: ""}); 
+       
+       Project.updateProj(tempProj.name, tempProj);
+       updateInterface();
+       // allow task to find out what container it is in
+       // 1. create a default tawsk 
+       // 2. add task to the tasklist of the project 
+       // 3. update interface (should take care of rest)
     });
 
     const verticalCross = document.createElement("div");
