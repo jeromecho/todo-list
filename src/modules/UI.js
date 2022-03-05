@@ -1,17 +1,36 @@
 import Project from './project';
-import Task from './task'
+import Task from './task';
+import { format } from 'date-fns';
 
-const body = document.querySelector("body"); 
+const body = document.querySelector("body");
+const editDisplay = document.createElement("form"); 
 
 const generateInterface = function() {
+
     body.appendChild(makeMain()); 
 }
+
+const firstProjectName = function() {
+    let initialProj = document.querySelector("#project0");
+    let initialName;
+
+    console.log(initialProj);
+
+    if (initialProj) {
+        initialName = initialProj.value;
+    }
+
+    return (initialProj)? initialName: "Project 1";
+};
 
 const deleteInterface = function() {
     while (body.firstChild) {
         body.removeChild(body.lastChild);
     }
 
+    while (editDisplay.firstChild)  {
+        editDisplay.removeChild(editDisplay.firstChild);
+    }
 }
 
 const updateInterface = function() {
@@ -33,7 +52,6 @@ const makeHeader = function() {
     const title = document.createElement("h1");
     header.id = "header";
     title.id = "title"; 
-
     title.textContent = "Too-doo!";
 
     header.appendChild(title);
@@ -55,8 +73,8 @@ const makeMenu = function() {
     const menu = document.createElement("div");
     menu.id = "menu"; 
 
-    // appends projects names to menu
     appendProjects(menu);
+
 
     menu.appendChild(makePButton());
 
@@ -76,20 +94,9 @@ const appendProjects = function (menu) {
         project.className = "project";
         project.type = "text";
 
-        // POTENTIAL EDIT 
         project.value = projectNames[i];
         
-        projectContainer.addEventListener("click", () => {
-            let tempProject = Project.returnByName(project.textContent);
-
-            Project.currentProjectTitle = tempProject.name;
-            Task.currentTaskList = tempProject.taskList; 
-
-            updateInterface();
-        });
-
-        // TODO: implement dblclick name change 
-        projectContainer.addEventListener("dblclick", () => {
+        project.addEventListener("click", () => {
             if (project.hasAttribute("readonly")) {
                 project.removeAttribute("readonly");
             } else {
@@ -97,16 +104,46 @@ const appendProjects = function (menu) {
             }
         });
 
-        projectContainer.appendChild(project);
+        let temp = Project.returnByName(project.value);
 
+        project.addEventListener("mouseleave", updateOnLeave.bind(project, project, temp));
+        projectContainer.addEventListener("dblclick", changeTaskBoard.bind(project, project));
+
+        // for initialization
+        setToReadOnly(project); 
+
+        projectContainer.appendChild(project);
         menu.appendChild(projectContainer);
     }
 }
 
+const changeTaskBoard = function (project) {
+    let tempProject = Project.returnByName(project.value);
+
+    Project.currentProjectTitle = tempProject.name;
+    Task.currentTaskList = tempProject.taskList;
+
+    updateInterface();
+};
+
+const updateOnLeave = function (project, temp) {
+    let newTemp = temp;
+    newTemp.name = project.value;
+
+    Project.updateProj(temp.name, newTemp);
+
+    if (! temp.name == newTemp.name) changeTaskBoard(newTemp);
+};
+
+const setToReadOnly = function(project) {
+       if (! project.hasAttribute("readonly")) {
+            project.setAttribute("readonly", "true");
+        } 
+};
+
 
 // project button 
 const makePButton = function() {
-
     const addProject = document.createElement("div");
 
     addProject.id = "project-button";
@@ -115,7 +152,6 @@ const makePButton = function() {
     addProject.addEventListener("click", () => {
         let newProject = Project.makeProject({name: "Untitled"});
         Project.addProjectToList(newProject);
-        // update entire interface 
         updateInterface();
     });
 
@@ -143,17 +179,119 @@ const makeTaskboard = function() {
 
     taskBoard.appendChild(projectTitle);
     taskBoard.appendChild(makeProjectDisplay(projectTitle));
+    taskBoard.appendChild(editDisplayContent());
 
     return taskBoard;
 }
 
-const makeProjectDisplay = (projectTitle) => {
-    const projectDisplay = document.createElement("div");
+const editDisplayContent = function () {
+    editDisplay.id = "edit-display"; 
 
+    const titleLabel = document.createElement("label");
+    const dueDateLabel = document.createElement("label");
+    const priorityLabel = document.createElement("label");
+    const descriptionLabel = document.createElement("label");
+
+    titleLabel.textContent = "Title";
+    dueDateLabel.textContent = "Due Date";
+    priorityLabel.textContent = "Priority";
+    descriptionLabel.textContent = "Description";
+
+    const title = document.createElement("input");
+    const dueDate = document.createElement("input");
+    const priority = document.createElement("input");
+    const description = document.createElement("input");
+
+    title.id = "title";
+    dueDate.id = "due-date"; 
+    priority.id = "priority"; 
+    description.id = "description";
+
+    dueDate.type = "date";
+
+    // load/display info of task 
+
+    let currentTask = Task.currentTask; 
+
+    title.value = currentTask.title; 
+    dueDate.value = currentTask.dueDate;
+    priority.value = currentTask.priority;
+    description.value = currentTask.description;
+    
+
+    editDisplay.appendChild(titleLabel);
+    editDisplay.appendChild(title);
+    
+    editDisplay.appendChild(dueDateLabel);
+    editDisplay.appendChild(dueDate);
+    
+    editDisplay.appendChild(priorityLabel);
+    editDisplay.appendChild(priority);
+
+    editDisplay.appendChild(descriptionLabel);
+    editDisplay.appendChild(description);
+
+    // turns HTMLCollection into array containing elements 
+    const fields = Array.from(editDisplay.children);
+
+    // access the child elements directly 
+    for (let i = 0; i < fields.length; i++) {
+        fields[i].className = "field";
+    }
+
+    editDisplay.appendChild(makeButtonsContainer());
+
+    return editDisplay;
+}
+
+const makeButtonsContainer = function() {
+    const container = document.createElement("div");
+    const doneButton = document.createElement("div");
+    const cancelButton = document.createElement("div");
+
+    const doneText = document.createElement("p");
+    const cancelText = document.createElement("p");
+
+    doneText.textContent = "Done";
+    cancelText.textContent = "Cancel";
+
+    container.id = "buttons-container";
+
+    doneButton.id = "done-button";
+    cancelButton.id = "cancel-button";
+
+    doneButton.appendChild(doneText);
+    cancelButton.appendChild(cancelText);
+
+    doneButton.addEventListener("click", () => {
+        const displayFields = Array.from(editDisplay.children);
+        if (displayFields[1].value == "") {
+            alert("Please give a valid title");
+        } else if (displayFields[3].value == "") {
+            alert("Please give a valid date.");
+        }else {
+            toggleEditDisplay();
+            updateTask();
+            updateInterface();
+        }
+    });
+
+    cancelButton.addEventListener("click", () => {
+        toggleEditDisplay();
+        updateInterface();
+    });
+
+    container.appendChild(doneButton);
+    container.appendChild(cancelButton);
+
+    return container;
+}
+
+const makeProjectDisplay =  function(projectTitle) {
+    const projectDisplay = document.createElement("div");
     projectDisplay.id = "project-display";
     
     appendTasks(projectDisplay);
-
     projectDisplay.appendChild(makeAddContainer(projectTitle));
 
     return projectDisplay;
@@ -166,12 +304,86 @@ const appendTasks = function(pd) {
     for (let i = 0; i < Task.currentTaskList.length; i ++) {
         let container = document.createElement("div");
         let text = document.createElement("p");
+        let date = document.createElement("p");
+
+        text.className = "text";
+        date.className = "date";
+
+        let currentTask = Task.currentTaskList[i];
         container.className = "task";
-        text.textContent = Task.currentTaskList[i].title;
-        // insert more task functionality 
+        text.textContent = currentTask.title;
+        // currentTask.duedate is a string
+        date.textContent = format(new Date(currentTask.dueDate), 'MM/dd/yyyy');
+
+        container.addEventListener("click", () => {
+            updateCurrentTask(currentTask); 
+            toggleEditDisplay();
+            updateInterface();
+        });
+
+        let delButton = document.createElement("div");
+        delButton.id = "del-button";
+
+        delButton.addEventListener("click", () => {
+            updateCurrentTask(currentTask);
+            deleteTask();
+            updateInterface();
+        });
+
+        container.appendChild(delButton);
         container.appendChild(text);
+        container.appendChild(date);
+
         pd.appendChild(container);
     }
+}
+
+const deleteTask = function() {
+    let delTask = Task.currentTask;
+
+    // update context for currentTaskList (iffy) 
+    Task.deleteTask(delTask, Task.currentTaskList);
+    toggleEditDisplay();
+
+    console.log(Task.currentTaskList);
+}
+
+const updateCurrentTask = function(currentTask) {
+    Task.currentTask = currentTask;
+};
+
+// using Task.currentTask, replaces info in currenTaskList
+const updateTask = function() {
+
+    let replaceTask = Task.currentTask; 
+    let newTask = Task.currentTask;
+
+    const displayFields = Array.from(editDisplay.children);
+
+    newTask.title = displayFields[1].value; 
+    newTask.dueDate = formatDate(displayFields[3].value);
+    newTask.priority = displayFields[5].value;
+    newTask.description = displayFields[7].value;
+    
+    Task.updateTaskList(replaceTask, newTask);
+    
+    updateInterface();
+};
+
+// Takes in string of format 'xxxx-xx-xx' and returns corresponding new date
+const formatDate = function(unformatted) {
+    let arr = unformatted.split('-');
+    return new Date(`${arr[0]}, ${arr[1]}, ${arr[2]}`);
+};
+
+const toggleEditDisplay = function() {
+    let style = window.getComputedStyle(editDisplay);
+    let display = style.getPropertyValue("display");
+    if (display == "none") {
+        editDisplay.style.display = "flex";
+    } else {
+        editDisplay.style.display = "none";
+    } 
 }
 
 const checkTaskList = function() {
@@ -192,19 +404,25 @@ const makeAddContainer = function(projectTitle) {
     addTask.id = "add-task-button";
     addTask.className = "add-button";
 
-    // TODO 
     addTask.addEventListener("click", () => { 
-       
+
+        // TODO 
+
+       console.log(Project.currentProjectTitle);
+       console.log(projectTitle.textContent);
+
+    
+        // projectTitle.textContent is not updating
        let tempProj = Project.returnByName(projectTitle.textContent);
 
-       tempProj.addTask({title: "Untitled", dueDate: 0, priority: 0, description: ""}); 
+       // TEST, can delte
+       Project.addBackMethod(tempProj);
+
+       tempProj.addTask({title: "Untitled", dueDate: new Date(), priority: 0, description: ""}); 
+       console.log(tempProj);
        
        Project.updateProj(tempProj.name, tempProj);
        updateInterface();
-       // allow task to find out what container it is in
-       // 1. create a default tawsk 
-       // 2. add task to the tasklist of the project 
-       // 3. update interface (should take care of rest)
     });
 
     const verticalCross = document.createElement("div");
@@ -221,5 +439,13 @@ const makeAddContainer = function(projectTitle) {
     return container;
 };
 
+const returnProjectList = function() {
+    let projectList = Project.returnProjectNames().map(name => Project.returnByName(name));
+
+    return projectList;
+};
+
 export default generateInterface; 
+
+
 

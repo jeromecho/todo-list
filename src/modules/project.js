@@ -3,21 +3,31 @@ import Task from './task';
 const Project = (function() {
 
     const makeProject = ({name}) => ({
-        taskList: [Task.makeTask({ title: "Do task", dueDate: "February 7", priority: "High", description: "Do task."})], 
+        taskList: [Task.makeTask({ title: "Do task", dueDate: new Date(2022, 1, 2), priority: "High", description: "Do task."})], 
         name: name, 
         addTask: function({title, dueDate, priority, description}) {
             this.taskList.push(Task.makeTask({ title, dueDate, priority, description }));
         }
     });
 
-    const _projectList = [makeProject({name: "Project 1"}), 
-    makeProject({name: "Project 2"}), makeProject({name: "Project 3"})];
+    const addBackMethod = (proj) => {
+        proj.addTask = function({title, dueDate, priority, description}) {
+            this.taskList.push(Task.makeTask({ title, dueDate, priority, description }));
+            console.log(this.taskList);
+        };  
+    };
 
+    let _projectList = [makeProject({name: "Project 1"})];
+    
     const currentProjectTitle = _projectList[0].name;
 
     const addProjectToList = (proj) => {
         _projectList.push(proj); 
     }
+
+    const reassignProjectList = (projects) => {
+        _projectList = projects; 
+    };
 
     // takes in proj name and updated object, updates _projectList w splice, no return value
     const updateProj = (name, proj) => {
@@ -25,14 +35,11 @@ const Project = (function() {
         _projectList.splice(index, 1, proj);
     }
 
-    // returns a copy 
     const returnProjectNames = () => {
         return _projectList.map(project => project.name);
     };
 
-    // returns a copy
     const returnByName = (name) => {
-        // if duplicates, return the first match
         return _projectList.filter(project => (project.name == name))[0];
     }
 
@@ -50,7 +57,9 @@ const Project = (function() {
         addProjectToList, 
         returnByName,
         currentProjectTitle,
+        reassignProjectList,
         updateProj,
+        addBackMethod,
     }
 })();
 

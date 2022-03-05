@@ -1,7 +1,12 @@
 :root {
+    --border-color: rgba(40, 40, 40, 0.6); 
+    --cancel-btn-color: #e42232;
+    --del-btn-color: #e42232;
+    --done-btn-color: rgb(76, 231, 109);
     --main-bg-color: rgb(240, 248, 255);
     --menu-bg-color: rgb(167, 199, 231);
     --header-bg-color: rgb(115, 147,179);
+    --display-bg-color: rgb(173, 216, 230);
 }
 
 html, body {
@@ -57,6 +62,8 @@ main > #content {
 }
 
 #project-display > .task {
+    cursor: pointer;
+    display: flex;
     text-align: center;
     transition: 500ms;
     width: 100%;
@@ -71,6 +78,30 @@ main > #content {
     font-size: 1.3em;
 }
 
+.task > #del-button {
+    background-color: var(--del-btn-color);
+    border-radius: 50%;
+    height: 12px;
+    opacity: 20%;
+    position: relative;
+    top: 30px;
+    transition: 500ms;
+    width: 12px; 
+}
+
+.task > .text {
+    margin-left: 42%;
+}
+
+.task > .date {
+    position: relative;
+    margin-left: auto;
+}
+
+#del-button:hover {
+    opacity: 100%;
+}
+
 #project-display > #add-task-button {
     background-color: var(--header-bg-color);
     border-radius: 100%;
@@ -81,6 +112,8 @@ main > #content {
 #project-display > #add-container {
     display: flex;
     justify-content: flex-end;
+    position: relative;
+    top: 10px;
     width: 100%;
 }
 
@@ -102,6 +135,19 @@ main > #content {
     background-color: var(--header-bg-color);
     color: var(--main-bg-color);
     opacity: 60%;
+}
+
+.project {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    text-align: center;
+    width: 80%;
+}
+
+.project:focus {
+    background: white; 
+    border: 1px solid black;
 }
 
 .add-button {
@@ -141,4 +187,76 @@ main > #content {
 
 #content > #taskboard {
     background-color: var(--main-bg-color);
+}
+
+#taskboard > #edit-display {
+    align-items: center;
+    background-color: var(--display-bg-color);
+    border: 2px solid var(--border-color);
+    border-radius: 3%;
+    display: none;
+    flex-direction: column;
+    height: 500px; 
+    inset: 50% 0 0 50%;
+    opacity: 95%;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    width: 500px;
+} 
+
+#edit-display > .field {
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 3%;
+    width: 60%;
+}
+
+#edit-display > #buttons-container {
+    align-items: center;
+    display: flex;
+    height: 20%;
+    justify-content: center;
+    margin-bottom: 40px;
+    margin-top: auto;
+    position: relative;
+    width: 40%;
+}
+
+#edit-display > label {
+    font-size: 1.4em;
+    margin: 20px 0 10px 0;
+}
+
+#done-button, #cancel-button {
+    align-items: center;
+    border-radius: 20%;
+    display: flex;
+    height: 60%;
+    justify-content: center;
+    margin: 10px 5px 10px 5px;
+    transition: 500ms;
+    width: 40%;
+}
+
+#done-button:hover, #cancel-button:hover {
+    cursor: pointer;
+    opacity: 20%;
+}
+
+#buttons-container > #done-button {
+    background-color: var(--done-btn-color);
+}
+
+#buttons-container > #cancel-button {
+    background-color: var(--cancel-btn-color);
+}
+
+@media only screen and (max-width: 600px) {
+    .project-container > .project {
+        font-size: 1.3em;
+    }
+
+    .task > p {
+        font-size: 1.2em;
+    }
 }
