@@ -10,7 +10,7 @@ Version 1.0.0
 
 ## Images 
 
-<img width="844" alt="image" src="https://user-images.githubusercontent.com/71617542/156902911-91fa5824-6465-4dfe-8e00-5645f54e73f9.png">
+<img width="848" alt="image" src="https://user-images.githubusercontent.com/71617542/156902932-606598de-48d7-4e2d-ba27-3ea604e40080.png">
 
 ## What I learned
 
